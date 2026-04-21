@@ -14,8 +14,8 @@ if file1 and file2:
     st.divider()
 
     if file_type == "xlsx":
-    df1 = read_excel(file1)
-    df2 = read_excel(file2)
+      df1 = read_excel(file1)
+      df2 = read_excel(file2)
 
     st.subheader("📊 Excel Comparison")
 
