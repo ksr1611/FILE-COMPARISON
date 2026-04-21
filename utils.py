@@ -30,7 +30,55 @@ def compare_text(text1, text2):
     return "\n".join(diff)
 
 def compare_excel(df1, df2):
+    result = {}
+
+    # Clean columns
+    df1.columns = df1.columns.str.strip()
+    df2.columns = df2.columns.str.strip()
+
+    # Common columns
+    common_cols = list(set(df1.columns).intersection(set(df2.columns)))
+    df1 = df1[common_cols].astype(str)
+    df2 = df2[common_cols].astype(str)
+
+    # 🔹 Similarities
+    common_rows = pd.merge(df1, df2)
+    result["similarities"] = common_rows
+
+    # 🔹 Missing
+    merged = df1.merge(df2, how='outer', indicator=True)
+
+    missing_in_file2 = merged[merged['_merge'] == 'left_only']
+    missing_in_file1 = merged[merged['_merge'] == 'right_only']
+
+    result["missing_in_file2"] = missing_in_file2
+    result["missing_in_file1"] = missing_in_file1
+
+    # 🔹 Differences (row-level mismatch)
+    diff_rows = merged[merged['_merge'] == 'both']
+
     try:
-        return df1.compare(df2)
+        cell_diff = df1.compare(df2)
     except:
-        return "⚠️ Excel structure mismatch (columns/rows not same)"
+        cell_diff = "Structure mismatch"
+
+    result["differences"] = cell_diff
+
+    # 🔹 Things to Note (basic insights)
+    notes = []
+
+    if len(common_cols) < len(df1.columns):
+        notes.append("Some columns are not matching between files")
+
+    if len(missing_in_file2) > 0:
+        notes.append(f"{len(missing_in_file2)} rows missing in File 2")
+
+    if len(missing_in_file1) > 0:
+        notes.append(f"{len(missing_in_file1)} rows missing in File 1")
+
+    if isinstance(cell_diff, str):
+        notes.append("Excel structure mismatch - cannot compare cells properly")
+
+    result["notes"] = notes
+
+    return result
