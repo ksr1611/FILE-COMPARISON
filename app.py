@@ -14,21 +14,21 @@ if file1 and file2:
     st.divider()
 
     if file_type == "xlsx":
-      df1 = read_excel(file1)
-      df2 = read_excel(file2)
+        df1 = read_excel(file1)
+        df2 = read_excel(file2)
 
-    st.subheader("📊 Excel Comparison")
+        st.subheader("📊 Excel Comparison")
 
-    result = compare_excel(df1, df2)
+        result = compare_excel(df1, df2)
 
-    st.write("### ❌ Missing in File 2")
-    st.dataframe(result["missing_in_file2"])
+        st.write("### ❌ Missing in File 2")
+        st.dataframe(result["missing_in_file2"])
 
-    st.write("### ❌ Missing in File 1")
-    st.dataframe(result["missing_in_file1"])
+        st.write("### ❌ Missing in File 1")
+        st.dataframe(result["missing_in_file1"])
 
-    st.write("### 🔍 Cell Differences")
-    st.dataframe(result["cell_diff"])
+        st.write("### 🔍 Cell Differences")
+        st.dataframe(result["cell_diff"])
 
     elif file_type == "pdf":
         text1 = read_pdf(file1)
